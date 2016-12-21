@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% load humanize %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Dojo Secrets Page</title>
+  </head>
+  <body>
+    {% if messages %}
+          {% for message in messages %}
+        <h4> {{message}}</h4>
+          {% endfor %}
+        {% endif %}
+    <h1> Welcome to the dojo, {{request.session.thisuser}}</h1>
+    <a href="secret_app/logout">Logout</a>
+    <form class="" action="secret_app/createpost" method="post">
+      {% csrf_token %}
+      <textarea name="content" rows="8" cols="80"></textarea>
+      <input type="submit" name="submit" value="Post">
+    </form>
+    <h3> Recent Secrets </h3>
+    {% for secret in secrets %}
+      {% if secret.user.email == request.session.thisemail %}
+      <p>{{secret.content}}  {{secret.created_at|naturaltime }}  {{secret.likes.count}}likes<a href="secret_app/delete/{{secret.id}}"> Delete Post</a> <p>
+      {% endif %}
+      {% if secret.user.email != request.session.thisemail and secret not in liked %}
+      <p>{{secret.content}} {{secret.created_at|naturaltime }}   {{secret.likes.count}}likes<a href="secret_app/like/{{secret.id}}"> Like</a> <p>
+      {% endif %}
+      {% if secret.user.email != request.session.thisemail and secret in liked %}
+      <p>{{secret.content}} {{secret.created_at|naturaltime }}   {{secret.likes.count}} likes   You like this <p>
+      {% endif %}
+    {% endfor %}
+  </body>
+</html>
+<option value=""></option>
